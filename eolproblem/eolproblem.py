@@ -1,35 +1,27 @@
+from web_fragments.fragment import Fragment
 
-import pkg_resources
-from xblock.core import XBlock
-from xblock.fields import String, Scope
-from xblock.fragment import Fragment
+from xmodule.util.xmodule_django import add_webpack_to_fragment
+from xmodule.x_module import shim_xmodule_js
+from xmodule.capa_module import ProblemBlock
 
-from xblockutils.studio_editable import StudioEditableXBlockMixin
+from xblockutils.resources import ResourceLoader
 
+loader = ResourceLoader(__name__)
 # Make '_' a no-op so we can scrape strings
 _ = lambda text: text
 
-class EolProblemXBlock(StudioEditableXBlockMixin, XBlock):
+class EolProblemXBlock(ProblemBlock):
 
-    display_name = String(
-        display_name=_("Display Name"),
-        help=_("Display name for this module"),
-        default="Constructor de Problemas Interactivo",
-        scope=Scope.settings,
-    )
+    mako_template = "templates/eolproblem/problem-edit.html"
 
-    icon_class = "problem"
-    editable_fields = ('display_name',)
-
-    def resource_string(self, path):
-        """Handy helper for getting resources from our kit."""
-        data = pkg_resources.resource_string(__name__, path)
-        return data.decode("utf8")
-
-    def student_view(self, context=None):
-        html = self.resource_string("static/html/eolproblem.html")
-        frag = Fragment(html.format(xblock=self))
-        frag.add_css(self.resource_string("static/css/eolproblem.css"))
-        frag.add_javascript(self.resource_string("static/js/src/eolproblem.js"))
-        frag.initialize_js('EolProblemXBlock')
-        return frag
+    def studio_view(self, _context):
+        """
+            (Override) Return the studio view.
+            ProblemBlock original render_template not working with custom mako templates
+                fragment = Fragment(self.system.render_template(self.mako_template, self.get_context()))
+        """
+        template = loader.render_mako_template(self.mako_template, self.get_context())
+        fragment = Fragment(template)
+        add_webpack_to_fragment(fragment, 'ProblemBlockStudio')
+        shim_xmodule_js(fragment, 'MarkdownEditingDescriptor')
+        return fragment
