@@ -1,0 +1,149 @@
+## mako
+<%! from django.utils.translation import ugettext as _ %>
+<%namespace name='static' file='../static_content.html'/>
+<%page expression_filter="h"/>
+
+
+<style>
+    .problem-builder-container {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 1px 3px rgb(0 0 0 / 20%) inset;
+        background-color: #f2f2f2;
+        padding: 20px;
+        width: 95%;
+        margin: 10px auto;
+        text-align: center;
+    }
+
+    .problem-builder-container p.problem-empty {
+        font-weight: lighter;
+        font-style: italic;
+    }
+
+    .problem-builder-container * {
+        box-sizing: border-box;
+    }
+
+    .problem-builder-container .column {
+        float: left;
+        padding: 10px;
+    }
+
+    .problem-builder-container .left {
+        width: 25%;
+        border-right: 2px solid grey;
+    }
+
+    .problem-builder-container .right {
+        width: 75%;
+    }
+
+    /* Clear floats after the columns */
+    .problem-builder-container .row:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+
+    .problem-builder-container .right label {
+        width: 15%;
+        display: inline-block;
+    }
+    .problem-builder-container .right input {
+        width: 70%;
+        height: 100%;
+        padding: 10px;
+        border-radius: 3px;
+        border: 1px solid #b2b2b2;
+        text-overflow: ellipsis;
+    }
+
+
+</style>
+<div class="problem-builder-container">
+    <!-- <p class="problem-empty">
+        El componente está vacío. Añade un nuevo ejercicio.
+    </p> -->
+    <div class="row">
+        <div class="column left">
+            <p><strong>Listado de Ejercicios</strong></p>
+            <ul class="list">
+                
+            </ul>
+        </div>
+        <div class="column right">
+        </div>
+      </div>
+
+</div>
+
+<script>
+
+    // TODO: Improve this index method
+    var problem_index = 0;
+
+    var build_problem = {
+        'multiplechoices-response' : 
+            build_multiplechoices = () => {
+                build_question_button('Multiplechoices Problem', problem_index++);
+                $('.problem-builder-container .column.right').html(
+                    `
+                        <div>
+                            ` + build_problem_header() + `
+                        </div>
+                    `
+                );
+            },
+        'checkboxes-response' : 
+            build_checkboxes = () => {
+                build_question_button('Checkboxes Problem', problem_index++);
+                $('.problem-builder-container .column.right').html(
+                    `
+                        <div>
+                            ` + build_problem_header() + `
+                        </div>
+                    `
+                );
+            }
+    }
+
+    const build_problem_header = () => {
+        var html = '';
+        html += build_question_text();
+        html += build_question_tip();
+
+        return html;    
+    }
+
+    const build_question_text = () => {
+        let html = `
+            <p>
+                <label for="">Enunciado</label>
+                <input type="text" id="" placeholder="Enunciado">
+            </p>
+        `;
+        return html;
+    }
+
+    const build_question_tip = () => {
+        let html = `
+            <p>
+                <label for="">Texto de Ayuda</label>
+                <input type="text" id="" placeholder="Texto de Ayuda">
+            </p>
+        `;
+        return html;
+    }
+
+    const build_question_button = (name, index) => {
+        $('.problem-builder-container .column.left ul.list').append(
+            `
+                <li>
+                    <button id="question-id-` + index + `"">` + name + `</button>
+                </li>
+            `
+        );
+    }
+</script>
