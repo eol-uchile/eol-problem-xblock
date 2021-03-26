@@ -13,7 +13,11 @@
         padding: 20px;
         width: 95%;
         margin: 10px auto;
-        text-align: center;
+    }
+
+    .problem-builder-container p.header {
+        text-align: center !important;
+        font-weight: bold;
     }
 
     .problem-builder-container p.problem-empty {
@@ -46,13 +50,19 @@
         clear: both;
     }
 
+    .problem-builder-container .right p {
+        text-align: left;
+    }
 
     .problem-builder-container .right label {
-        width: 15%;
+        width: 30%;
+        max-width: 200px;
         display: inline-block;
+        text-align: right;
+        padding-right: 20px;
     }
-    .problem-builder-container .right input {
-        width: 70%;
+    .problem-builder-container .right input[type=text] {
+        width: 60%;
         height: 100%;
         padding: 10px;
         border-radius: 3px;
@@ -60,6 +70,70 @@
         text-overflow: ellipsis;
     }
 
+    .problem-builder-container input[type=checkbox] {
+        vertical-align: middle;
+        margin: 0 5px;
+    }
+
+    .problem-builder-container .choices {
+        background-color: #bdc6ca8f;
+        border-radius: 10px;
+        padding: 10px 0px;
+    }  
+    
+    .problem-builder-container .add-new-choice {
+        text-align: center;
+    } 
+
+    .plus-button {
+        border: 2px solid lightgrey;
+        background-color: #fff;
+        font-size: 16px;
+        height: 2.5em;
+        width: 2.5em;
+        border-radius: 999px;
+        position: relative;
+    }
+
+    .plus-button:after,
+    .plus-button:before {
+        content: "";
+        display: block;
+        background-color: grey;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .plus-button:before {
+        height: 1em;
+        width: 0.2em;
+    }
+
+    .plus-button:after {
+        height: 0.2em;
+        width: 1em;
+    }
+
+    .plus-button--small {
+        font-size: 12px;
+    }
+
+    .plus-button--large {
+        font-size: 22px;
+    }
+
+    .remove-choice {
+        color: #f44336;
+        cursor: pointer;
+    }
+
+    .remove-choice:hover {
+        color: #f31a0b;
+    }
+
+    
 
 </style>
 <div class="problem-builder-container">
@@ -68,12 +142,37 @@
     </p> -->
     <div class="row">
         <div class="column left">
-            <p><strong>Listado de Ejercicios</strong></p>
+            <p class="header">Listado de Ejercicios</p>
             <ul class="list">
                 
             </ul>
         </div>
         <div class="column right">
+            <p>
+                <label for="">Enunciado</label>
+                <input type="text" id="" placeholder="Enunciado">
+            </p>
+            <p>
+                <label for="">Enunciado</label>
+                <input type="text" id="" placeholder="Enunciado">
+            </p>
+            <div class="choices">
+                <p class="header">Alternativas</p>
+                <p>
+                    <label for=""><input type="checkbox" id="cbox1" value="first_checkbox"></label>
+                    <input type="text" id="" placeholder="Ingrese Respuesta">
+                    <span class="icon fa fa-times-circle remove-choice" aria-hidden="true"></span><span class="sr">"Borrar"</span>
+                </p>
+
+                <p>
+                    <label for=""><input type="checkbox" id="cbox1" value="first_checkbox"></label>
+                    <input type="text" id="" placeholder="Ingrese Respuesta">
+                    <span class="icon fa fa-times-circle remove-choice" aria-hidden="true"></span><span class="sr">"Borrar"</span>
+                </p>
+                <div class="add-new-choice">
+                    <button class="plus-button plus-button--large"></button>
+                </div>
+            </div>
         </div>
       </div>
 
@@ -81,40 +180,29 @@
 
 <script>
 
+
     // TODO: Improve this index method
     var problem_index = 0;
 
+    const build_multiplechoices = () => {
+        build_question_button('Multiplechoices Problem', problem_index++);
+        build_problem_header();
+    }
+
+    const build_checkboxes = () => {
+        build_question_button('Checkboxes Problem', problem_index++);
+        build_problem_header();
+    }
+
     var build_problem = {
-        'multiplechoices-response' : 
-            build_multiplechoices = () => {
-                build_question_button('Multiplechoices Problem', problem_index++);
-                $('.problem-builder-container .column.right').html(
-                    `
-                        <div>
-                            ` + build_problem_header() + `
-                        </div>
-                    `
-                );
-            },
-        'checkboxes-response' : 
-            build_checkboxes = () => {
-                build_question_button('Checkboxes Problem', problem_index++);
-                $('.problem-builder-container .column.right').html(
-                    `
-                        <div>
-                            ` + build_problem_header() + `
-                        </div>
-                    `
-                );
-            }
+        'multiplechoices-response' : build_multiplechoices,
+        'checkboxes-response' : build_checkboxes
     }
 
     const build_problem_header = () => {
-        var html = '';
-        html += build_question_text();
-        html += build_question_tip();
-
-        return html;    
+        $('.problem-builder-container .column.right').html(
+            build_question_text() + build_question_tip()
+        ); 
     }
 
     const build_question_text = () => {
@@ -146,4 +234,41 @@
             `
         );
     }
+
+    const build_choice = () => {
+        return (
+            `
+            <p>
+                <label for=""><input type="checkbox" id="" value=""></label>
+                <input type="text" id="" placeholder="Ingrese Respuesta">
+                <span class="icon fa fa-times-circle remove-choice" aria-hidden="true"></span><span class="sr">"Borrar"</span>
+            </p>
+            `
+        )
+    }
+
+    const init_events = () => {
+        $('.add-new-choice button').click(() => {
+            $(build_choice()).insertBefore( "div.add-new-choice" );
+        } );
+        $('p span.remove-choice').click(({ target }) => {
+            $(target).parent().remove();
+        });
+    }
+
+
+    $(function() {
+        const handle_remove_choice = () => (
+            $('p span.remove-choice').click(({ target }) => {
+                $(target).parent().remove();
+            })
+        );
+
+        $('.add-new-choice button').click(() => {
+            $(build_choice()).insertBefore( "div.add-new-choice" );
+            handle_remove_choice();
+        } );
+        handle_remove_choice();
+        
+    });
 </script>
