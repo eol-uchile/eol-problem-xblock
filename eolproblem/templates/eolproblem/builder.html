@@ -144,11 +144,14 @@
         <div class="column left">
             <p class="header">Listado de Ejercicios</p>
             <ul class="list">
-                
+                <li>
+                    <button id="question-id-99">Test Test Test</button>
+                </li>
             </ul>
         </div>
         <div class="column right">
-            <p>
+            <p class="header">Agrega/Selecciona un ejercicio para visualizar sus opciones.</p>
+            <!-- <p>
                 <label for="">Enunciado</label>
                 <input type="text" id="" placeholder="Enunciado">
             </p>
@@ -172,7 +175,7 @@
                 <div class="add-new-choice">
                     <button class="plus-button plus-button--large"></button>
                 </div>
-            </div>
+            </div> -->
         </div>
       </div>
 
@@ -187,11 +190,13 @@
     const build_multiplechoices = () => {
         build_question_button('Multiplechoices Problem', problem_index++);
         build_problem_header();
+        build_choices_container();
     }
 
     const build_checkboxes = () => {
         build_question_button('Checkboxes Problem', problem_index++);
         build_problem_header();
+        build_choices_container();
     }
 
     var build_problem = {
@@ -225,6 +230,21 @@
         return html;
     }
 
+    const build_choices_container = ( ) => {
+        $('.problem-builder-container .column.right').append(
+            `
+                <div class="choices">
+                    <p class="header">Alternativas</p>
+                ` + build_choice() + `
+                    <div class="add-new-choice">
+                        <button class="plus-button plus-button--large"></button>
+                    </div>
+                </div>
+            `
+        );
+        init_events();
+    }
+
     const build_question_button = (name, index) => {
         $('.problem-builder-container .column.left ul.list').append(
             `
@@ -247,28 +267,22 @@
         )
     }
 
-    const init_events = () => {
-        $('.add-new-choice button').click(() => {
-            $(build_choice()).insertBefore( "div.add-new-choice" );
-        } );
+    
+    const handle_remove_choice = () => (
         $('p span.remove-choice').click(({ target }) => {
             $(target).parent().remove();
-        });
-    }
-
-
-    $(function() {
-        const handle_remove_choice = () => (
-            $('p span.remove-choice').click(({ target }) => {
-                $(target).parent().remove();
-            })
-        );
-
+        })
+    );
+    
+    const handle_new_choice = () => {
         $('.add-new-choice button').click(() => {
             $(build_choice()).insertBefore( "div.add-new-choice" );
             handle_remove_choice();
         } );
+    }
+    
+    const init_events = () => {
+        handle_new_choice();
         handle_remove_choice();
-        
-    });
+    }
 </script>
