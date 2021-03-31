@@ -1,4 +1,5 @@
 from web_fragments.fragment import Fragment
+from pkg_resources import resource_string
 
 from xmodule.util.xmodule_django import add_webpack_to_fragment
 from xmodule.x_module import shim_xmodule_js

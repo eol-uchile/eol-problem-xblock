@@ -66,6 +66,49 @@
 
 <script>
     $(function() {
+        const PROBLEM_INIT = `<problem>`;
+        const PROBLEM_END = `</problem>`;
+        const MULTIPLECHOICE_INIT = `<multiplechoiceresponse>`;
+        const MULTIPLECHOICE_END  = `</multiplechoiceresponse>`;
+        const PROBLEM_HEADER_INIT = `<label>`
+        var data = [];
+
+
+
         $('button.new-problem-btn').click(({target}) => build_problem[target.id]() );
+
+        const init_data = () => {
+            let xml = document.querySelector('.CodeMirror').CodeMirror;
+            let xml_data = xml.getValue().split("\n");
+            for(var i=0; i < xml_data.length; i++) {
+                let value = xml_data[i].trim();
+                if(value == PROBLEM_INIT) {
+                    data = [];
+                } else if (value == PROBLEM_END) {
+                    break;
+                } else {
+                    if(value == MULTIPLECHOICE_INIT) {
+                        while(value != MULTIPLECHOICE_END && i < xml_data.length) {
+                            value = xml_data[i].trim();
+                            if(value.substring(0,PROBLEM_HEADER_INIT.length) == PROBLEM_HEADER_INIT) {
+                                console.log(`Problem header: ` + value);
+                            }
+                            i++;
+                        }
+                    }
+                }
+            }
+            // $.each(xml_data, (index, line) => {
+            //     let value = line.trim();
+            //     console.log(value);
+            // });
+        }
+
+        // Wait until CodeMirror is initialized
+        (async() => {
+            while(!document.querySelector('.CodeMirror'))
+                await new Promise(() => setTimeout(init_data, 500));
+        })();
+
     });
 </script>
